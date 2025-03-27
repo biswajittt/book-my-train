@@ -4,9 +4,11 @@ import { useAuth } from "../../context/AuthContext";
 import { supabase } from "../../services/supabaseClient";
 export default function Navbar() {
   const { user } = useAuth();
+  console.log(user);
   const navigate = useNavigate();
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    localStorage.clear(); // Clear all items from localStorage
     navigate("/");
   };
   return (

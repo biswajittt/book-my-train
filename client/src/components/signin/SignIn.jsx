@@ -48,7 +48,7 @@ export default function SignIn() {
             name="email"
             id="email"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
-            placeholder="name@company.com"
+            placeholder="Enter your email"
             onChange={(e) => setEmail(e.target.value)}
             required
           />
@@ -64,7 +64,7 @@ export default function SignIn() {
             type="password"
             name="password"
             id="password"
-            placeholder="••••••••"
+            placeholder="Enter your password"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
             required
             onChange={(e) => setPassword(e.target.value)}
