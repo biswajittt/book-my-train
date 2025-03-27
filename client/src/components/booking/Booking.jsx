@@ -25,7 +25,6 @@ export default function Booking() {
           `${import.meta.env.VITE_API_URL}/api/bookings/available-seats`
         );
         setSeats(response.data);
-        console.log(response);
         setAvailableSeatsNumber(response.data.length);
       } catch (err) {
         setError({ code: 0, msg: "Failed to load seats" });
