@@ -73,7 +73,7 @@ export default function Dashboard() {
           tabindex="-1"
           class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
         >
-          <div class="m-auto top-[22%] relative p-4 w-auto w-3xl  sm:w-2xl  max-h-full">
+          <div class="m-auto top-[15%] relative p-4 w-auto w-3xl  sm:w-2xl  max-h-full">
             <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
               <button
                 type="button"
@@ -103,7 +103,7 @@ export default function Dashboard() {
               <div class="p-4 md:p-5 text-center">
                 {/* {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>} */}
 
-                <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-[2rem]">
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-[4rem] mb-[2rem]">
                   <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                       <tr>
