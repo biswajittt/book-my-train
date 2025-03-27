@@ -110,7 +110,7 @@ export default function Booking() {
   };
   return (
     <>
-      {!bookingSuccessful && (
+      {bookingSuccessful && (
         <div
           id="successModal"
           tabindex="-1"
