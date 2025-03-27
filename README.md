@@ -9,7 +9,6 @@ Welcome to **Book My Train**, the online platform that takes the stress out of b
 - 🪑 **Pick Your Perfect Seat:** Select the exact seats you want. Window? Aisle? You're in control!
 - 🎟️ **Book Multiple Tickets:** Traveling with friends or family? Book all your tickets in one go!
 - 💸 **Flexible Cancellations:** Plans changed? No problem! Cancel individual tickets or your entire booking with ease.
-- 🔄 **Instant Seat Reset (Admin):** Need to reset the train layout? Our admin tool does it in seconds.
 - 💻 **Responsive Design:** Book your tickets on any device – phone, tablet, or computer.
 
 ## 🛠️ Tech Stack: The Engine Behind Our Journey
