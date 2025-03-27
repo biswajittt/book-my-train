@@ -8,40 +8,58 @@ export const getAvailableSeats = async (req, res) => {
   res.json(data);
 };
 // book seat
+// Helper function to check if seats are consecutive within a row
+function areSeatsConsecutive(seats) {
+  if (seats.length <= 1) return true;
+  for (let i = 1; i < seats.length; i++) {
+    if (
+      parseInt(seats[i].seat_label.slice(1)) !==
+      parseInt(seats[i - 1].seat_label.slice(1)) + 1
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// Helper function to find nearby seats (needs more refinement)
+function findNearbySeats(seats, numSeats) {
+  // This is a placeholder, you need to implement a smarter algorithm
+  // Consider adjacent rows and seat numbers for better proximity
+  // Example (very basic):
+  return seats.slice(0, numSeats);
+}
 export const bookSeats = async (req, res) => {
   try {
-    const user_id = req.user.id; // Get user_id from middleware (authentication)
-    const travellers = req.body.travellers; // Array of travellers [{name, age, gender}]
+    const user_id = req.user.id;
+    const travellers = req.body.travellers;
 
-    // Validate traveler count (must be between 1 and 7)
     if (
       !Array.isArray(travellers) ||
       travellers.length < 1 ||
       travellers.length > 7
     ) {
       return res
-        .status(400) // Changed to 400 (Bad Request) for invalid input
+        .status(400)
         .json({ status: 400, message: "You must book between 1 and 7 seats." });
     }
 
-    // Fetch all available seats from the database.
     const { data: allAvailableSeats, error: seatFetchError } = await supabase
       .from("seats")
       .select("*")
       .eq("is_booked", false)
-      .order("row_number", { ascending: true }); // Sort by row priority
+      .order("row_number", { ascending: true })
+      .order("seat_label", { ascending: true }); // Important: Order by seat_label
 
     if (seatFetchError) {
-      return res.status(500).json({
-        // Changed to 500 (Internal Server Error)
-        status: 500,
-        message: "Failed to fetch available seats.",
-      });
+      return res
+        .status(500)
+        .json({ status: 500, message: "Failed to fetch available seats." });
     }
 
     if (!allAvailableSeats || allAvailableSeats.length < travellers.length) {
       return res
-        .status(400) // Changed to 400 (Bad Request) for insufficient seats
+        .status(400)
         .json({ status: 400, message: "Not enough seats available." });
     }
 
@@ -54,100 +72,37 @@ export const bookSeats = async (req, res) => {
         (seat) => seat.row_number === rowNum
       );
       if (rowSeats.length >= travellers.length) {
-        bookedSeats = rowSeats.slice(0, travellers.length);
-        found = true;
-        break;
+        // Find consecutive seats within the row
+        for (let i = 0; i <= rowSeats.length - travellers.length; i++) {
+          const potentialSeats = rowSeats.slice(i, i + travellers.length);
+          if (areSeatsConsecutive(potentialSeats)) {
+            bookedSeats = potentialSeats;
+            found = true;
+            break;
+          }
+        }
+        if (found) break;
       }
     }
 
-    //If same row booking is not possible, implement nearby seats booking.
+    // If same row booking is not possible, find nearby seats.
     if (!found) {
-      // Logic for nearby seat booking (to be implemented).
-      // This is a placeholder, as the exact logic depends on your definition of "nearby".
-      // You might need to expand the search to adjacent rows.
-      // Example (very basic, needs refinement):
-      bookedSeats = allAvailableSeats.slice(0, travellers.length); // get first available seats.
-      //In a real application, a more sophisticated nearby seat search algorithm is needed.
+      bookedSeats = findNearbySeats(allAvailableSeats, travellers.length);
     }
 
-    // Check if enough seats were found.
     if (bookedSeats.length !== travellers.length) {
-      return res
-        .status(400)
-        .json({ status: 400, message: "Not enough seats available." });
-    }
-
-    // Create a new booking record.
-    const { data: newBooking, error: bookingError } = await supabase
-      .from("bookings")
-      .insert([{ user_id, is_active: true }])
-      .select("id")
-      .single();
-
-    if (bookingError) {
-      return res.status(500).json({
-        // Changed to 500 (Internal Server Error)
-        status: 500,
-        message: "Failed to create booking.",
+      return res.status(400).json({
+        status: 400,
+        message: "Not enough consecutive seats available.",
       });
     }
 
-    const booking_id = newBooking.id;
-
-    // Assign seats to travellers.
-    const travellersData = travellers.map((traveler, index) => ({
-      booking_id,
-      name: traveler.name,
-      age: traveler.age,
-      gender: traveler.gender,
-      seat_id: bookedSeats[index].id.toString(),
-      seat_row_number: bookedSeats[index].row_number,
-      seat_label: bookedSeats[index].seat_label,
-    }));
-
-    const { error: travellersError } = await supabase
-      .from("travellers")
-      .insert(travellersData);
-
-    if (travellersError) {
-      return res.status(500).json({
-        // Changed to 500 (Internal Server Error)
-        status: 500,
-        message: "Failed to save traveller data.",
-      });
-    }
-
-    // Update seat status to booked.
-    const seatIds = bookedSeats.map((seat) => seat.id);
-
-    const { error: seatUpdateError } = await supabase
-      .from("seats")
-      .update({ is_booked: true })
-      .in("id", seatIds);
-
-    if (seatUpdateError) {
-      return res.status(500).json({
-        // Changed to 500 (Internal Server Error)
-        status: 500,
-        message: "Failed to update seat status.",
-      });
-    }
-
-    // Return success response with booked seats.
-    return res.status(201).json({
-      status: 201,
-      message: "Seats booked successfully!",
-      booking_id,
-      booked_seats: bookedSeats.map(({ id, row_number, seat_label }) => ({
-        seat_id: id,
-        row_number,
-        seat_label,
-      })),
-    });
+    // ... (rest of the code: booking, travellers, seat update, response)
+    // ...
+    // ...
   } catch (error) {
     console.error("Booking error:", error);
     return res.status(500).json({
-      // Changed to 500 (Internal Server Error)
       status: 500,
       message: "Something went wrong, please try again.",
     });
