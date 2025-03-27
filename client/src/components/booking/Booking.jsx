@@ -46,7 +46,17 @@ export default function Booking() {
       setErrorMessage("Maximum of 7 travellers allowed.");
       return;
     }
+    if (!/^[a-zA-Z\s]+$/.test(name)) {
+      // Added name validation
+      setErrorMessage("Name must contain only letters and spaces.");
+      return;
+    }
 
+    if (!/^\d+$/.test(age) || parseInt(age) <= 0) {
+      // Added age validation
+      setErrorMessage("Age must be a positive number.");
+      return;
+    }
     setAddTraveller([...addTraveller, { name, age, gender }]);
     setShowCard(false);
     setName("");
@@ -100,7 +110,7 @@ export default function Booking() {
   };
   return (
     <>
-      {bookingSuccessful && (
+      {!bookingSuccessful && (
         <div
           id="successModal"
           tabindex="-1"
@@ -108,7 +118,7 @@ export default function Booking() {
           class=" overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full"
         >
           <div class="m-auto top-[22%] relative p-4 w-auto max-w-md h-full md:h-auto">
-            <div class="mt-16 relative p-4 text-center rounded-lg shadow bg-gray-600 sm:p-5">
+            <div class="mt-[14rem] relative p-4 text-center rounded-lg shadow bg-gray-600 sm:p-5">
               <button
                 onClick={() => {
                   setBookingSuccessfull(false);
