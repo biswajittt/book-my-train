@@ -35,7 +35,7 @@ export default function SignUp() {
     setLoading(false);
   };
   return (
-    <div class="m-auto mt-8 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+    <div class="m-auto mt-8 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-6 md:p-8 bg-gray-800 dark:border-gray-700">
       <form class="space-y-6" onSubmit={handleSignUp}>
         <h5 class="text-xl font-medium text-gray-900 dark:text-white">
           Sign up to our platform

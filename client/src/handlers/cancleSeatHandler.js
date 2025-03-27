@@ -1,6 +1,6 @@
 import axios from "axios";
 import { supabase } from "../services/supabaseClient.js";
-const API_URL = "http://localhost:8000/api/bookings/cancle-seat"; // Adjust based on your backend URL
+const API_URL = `${import.meta.env.VITE_API_URL}/api/bookings/cancle-seat`; // Adjust based on your backend URL
 
 export const cancleSeats = async (travelerId, seatId) => {
   try {
@@ -19,7 +19,6 @@ export const cancleSeats = async (travelerId, seatId) => {
         },
       }
     );
-    console.log(response);
     return response; // Successfully booked seats
   } catch (error) {
     console.error("Booking error:", error.response?.data || error.message);

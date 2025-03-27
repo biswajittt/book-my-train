@@ -14,10 +14,11 @@ import SignIn from "./components/signin/SignIn.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx"; // Make sure AuthProvider is imported
 import Dashboard from "./components/dashboard/Dashboard.jsx";
+import Home from "./components/home/Home.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      {/* <Route path="" element={<Home />} /> */}
+      <Route path="" element={<Home />} />
       <Route path="signup" element={<SignUp />} />
       <Route path="signin" element={<SignIn />} />
       <Route element={<ProtectedRoute />}>

@@ -8,7 +8,7 @@ import { cancleSeats } from "../../handlers/cancleSeatHandler.js";
 export default function Dashboard() {
   const { user } = useAuth(); // Get user details
   const [allBookings, setAllBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showCard, setShowCard] = useState({
     show: false,
@@ -17,8 +17,8 @@ export default function Dashboard() {
   const [travellers, setTravellers] = useState([]);
   const [seatCancled, setSeatCancled] = useState({}); // Store cancellation per traveller
   useEffect(() => {
-    setLoading(true);
     const fetchBookings = async () => {
+      setLoading(true);
       const result = await fetchAllBookings(user?.id);
       if (result?.data?.status === 201) {
         setAllBookings(result.data.bookings);
@@ -33,10 +33,10 @@ export default function Dashboard() {
       } else {
         setError("Something went wrong!");
       }
+      setLoading(false);
     };
 
     fetchBookings();
-    setLoading(false);
   }, []);
 
   //delete booking
@@ -46,7 +46,6 @@ export default function Dashboard() {
       [travelerId]: { status: null, code: 1 }, // Loading state
     }));
     const result = await cancleSeats(travelerId, seatId);
-    // console.log(result);
     if (result?.data?.status === 201) {
       setSeatCancled((prev) => ({
         ...prev,
@@ -59,6 +58,13 @@ export default function Dashboard() {
       }));
     }
   };
+  if (loading) {
+    return (
+      <section class="bg-gray-900 h-screen flex flex-col">
+        <h6 className="text-center text-white mt-16">Loading...</h6>
+      </section>
+    );
+  }
   return (
     <>
       {showCard.show && (
@@ -181,10 +187,10 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-      <section class="bg-gray-50 dark:bg-gray-900 h-screen flex flex-col">
+      <section class="bg-gray-900 h-screen flex flex-col">
         {allBookings.length > 0 ? (
           <>
-            <h2 class="my-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+            <h2 class="my-4 mx-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
               All Bookings
             </h2>
             <div class="lg:w-[70vw] px-4 mx-auto lg:px-12 w-[90vw] flex flex-col">
@@ -218,7 +224,7 @@ export default function Dashboard() {
             </div>
           </>
         ) : (
-          <h6 className="text-center">Nothing to Show</h6>
+          <h6 className="text-center text-white mt-8">Nothing to Show</h6>
         )}
       </section>
     </>

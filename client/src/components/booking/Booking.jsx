@@ -22,7 +22,7 @@ export default function Booking() {
     const fetchSeats = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/bookings/available-seats"
+          `${import.meta.env.VITE_API_URL}/api/bookings/available-seats`
         );
         setSeats(response.data);
         setAvailableSeatsNumber(response.data.length);
@@ -281,7 +281,7 @@ export default function Booking() {
           </div>
         </div>
       )}
-      <section class="bg-white pt-4 antialiased dark:bg-gray-900 md:py-8 h-[100vh]">
+      <section class=" pt-4 antialiased bg-gray-900 md:py-8 h-[100vh]">
         <div class="mx-4 mb-4 bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-blue-400 border border-blue-400 inline-flex items-center justify-center">
           {avaibaleSeatsNumber >= 0 ? (
             <h3>Seats Availabe: {avaibaleSeatsNumber}</h3>
