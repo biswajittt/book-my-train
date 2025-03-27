@@ -25,7 +25,10 @@ export default function SignIn() {
     if (response?.error) {
       setError(response?.error.message);
       setLoading(false);
+      return;
     }
+    setEmail("");
+    setPassword("");
     navigate("/booking");
     setLoading(false);
   };

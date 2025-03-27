@@ -28,7 +28,8 @@ export default function SignUp() {
       setError(response?.error.message);
       setLoading(false);
     } else {
-      alert("Check your email for confirmation");
+      setEmail("");
+      setPassword("");
       setLoading(false);
     }
     setLoading(false);

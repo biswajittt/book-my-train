@@ -7,7 +7,15 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+//cors
+app.use(
+  cors({
+    origin: "https://book-my-train-wine.vercel.app", // Only allow your frontend to access the backend
+    // origin: process.env.CORS_ORIGIN,
+    credentials: true,
+    allowedHeaders: ["Authorization", "Content-Type"], // Ensure Authorization is allowed
+  })
+);
 app.use(express.json());
 
 app.use("/api/bookings", bookingRoutes);
