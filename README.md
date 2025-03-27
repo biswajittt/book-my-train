@@ -6,7 +6,6 @@ Welcome to **Book My Train**, the online platform that takes the stress out of b
 
 - ✨ **Easy Account Setup:** Sign up and log in securely with Supabase. Your journey starts with a simple click!
 - 🗺️ **Real-Time Seat Availability:** See which seats are free in a flash! No more guessing; just choose and book.
-- 🪑 **Pick Your Perfect Seat:** Select the exact seats you want. Window? Aisle? You're in control!
 - 🎟️ **Book Multiple Tickets:** Traveling with friends or family? Book all your tickets in one go!
 - 💸 **Flexible Cancellations:** Plans changed? No problem! Cancel individual tickets or your entire booking with ease.
 - 💻 **Responsive Design:** Book your tickets on any device – phone, tablet, or computer.
@@ -23,7 +22,7 @@ Welcome to **Book My Train**, the online platform that takes the stress out of b
 1.  **Clone the Repository:**
 
     ```bash
-    git clone [your-repository-url]
+    git clone https://github.com/biswajittt/book-my-train.git
     cd book-my-train
     ```
 
@@ -40,9 +39,6 @@ Welcome to **Book My Train**, the online platform that takes the stress out of b
     - Install dependencies: `npm install`
     - Create a `.env` file with your Supabase API keys.
     - Run the app: `npm run dev`
-
-4.  **Database Setup:**
-    - Supabase automatically handles your PostgreSQL database. Make sure your Supabase project is set up correctly, and that the keys are in the `.env` files.
 
 ## 🌟 Future Destinations: What's Next?
 
