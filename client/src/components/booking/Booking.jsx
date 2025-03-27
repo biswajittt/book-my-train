@@ -83,7 +83,7 @@ export default function Booking() {
     }
     try {
       setLoading(true);
-      const result = await bookSeats(addTraveller, user?.id);
+      const result = await bookSeats(addTraveller);
       if (result?.data?.status === 500) {
         setError({ code: 1, msg: "Something went wrong, please try again" });
       } else if (result?.data?.status === 401) {
@@ -322,9 +322,7 @@ export default function Booking() {
                             {traveller.age}
                           </div>
                         </div>
-                        {loading ? (
-                          "Loading..."
-                        ) : (
+                        {loading ? null : (
                           <button
                             type="button"
                             class="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500"

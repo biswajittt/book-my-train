@@ -50,7 +50,7 @@ export const bookSeats = async (req, res) => {
       .eq("is_booked", false)
       .order("row_number", { ascending: true })
       .order("seat_label", { ascending: true }); // Important: Order by seat_label
-
+    // console.log(allAvailableSeats);
     if (seatFetchError) {
       return res
         .status(500)
@@ -93,13 +93,76 @@ export const bookSeats = async (req, res) => {
     if (bookedSeats.length !== travellers.length) {
       return res.status(400).json({
         status: 400,
-        message: "Not enough consecutive seats available.",
+        message: "Not enough seats available.",
+      });
+    }
+    // Create a new booking record.
+    const { data: newBooking, error: bookingError } = await supabase
+      .from("bookings")
+      .insert([{ user_id, is_active: true }])
+      .select("id")
+      .single();
+
+    if (bookingError) {
+      return res.status(500).json({
+        // Changed to 500 (Internal Server Error)
+        status: 500,
+        message: "Failed to create booking.",
       });
     }
 
-    // ... (rest of the code: booking, travellers, seat update, response)
-    // ...
-    // ...
+    const booking_id = newBooking.id;
+
+    // Assign seats to travellers.
+    const travellersData = travellers.map((traveler, index) => ({
+      booking_id,
+      name: traveler.name,
+      age: traveler.age,
+      gender: traveler.gender,
+      seat_id: bookedSeats[index].id.toString(),
+      seat_row_number: bookedSeats[index].row_number,
+      seat_label: bookedSeats[index].seat_label,
+    }));
+
+    const { error: travellersError } = await supabase
+      .from("travellers")
+      .insert(travellersData);
+
+    if (travellersError) {
+      return res.status(500).json({
+        // Changed to 500 (Internal Server Error)
+        status: 500,
+        message: "Failed to save traveller data.",
+      });
+    }
+
+    // Update seat status to booked.
+    const seatIds = bookedSeats.map((seat) => seat.id);
+
+    const { error: seatUpdateError } = await supabase
+      .from("seats")
+      .update({ is_booked: true })
+      .in("id", seatIds);
+
+    if (seatUpdateError) {
+      return res.status(500).json({
+        // Changed to 500 (Internal Server Error)
+        status: 500,
+        message: "Failed to update seat status.",
+      });
+    }
+
+    // Return success response with booked seats.
+    return res.status(201).json({
+      status: 201,
+      message: "Seats booked successfully!",
+      booking_id,
+      booked_seats: bookedSeats.map(({ id, row_number, seat_label }) => ({
+        seat_id: id,
+        row_number,
+        seat_label,
+      })),
+    });
   } catch (error) {
     console.error("Booking error:", error);
     return res.status(500).json({

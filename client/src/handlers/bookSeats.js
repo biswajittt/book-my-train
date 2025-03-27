@@ -2,7 +2,7 @@ import axios from "axios";
 import { supabase } from "../services/supabaseClient.js";
 const API_URL = `${import.meta.env.VITE_API_URL}/api/bookings/book`; // Adjust based on your backend URL
 
-export const bookSeats = async (travellers, userId) => {
+export const bookSeats = async (travellers) => {
   try {
     // Get the session, which includes the token
     const { data: session } = await supabase.auth.getSession();
@@ -12,7 +12,7 @@ export const bookSeats = async (travellers, userId) => {
 
     const response = await axios.post(
       `${API_URL}`,
-      { travellers, userId },
+      { travellers },
       {
         headers: {
           Authorization: `Bearer ${token}`, // Send token

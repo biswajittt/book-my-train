@@ -197,7 +197,7 @@ export default function Dashboard() {
               {allBookings.map((data, index) => (
                 <div
                   key={index}
-                  class="relative mb-4 bg-white shadow-md dark:bg-gray-800 sm:rounded-lg"
+                  class="cursor-pointer relative mb-4 bg-white shadow-md dark:bg-gray-800 sm:rounded-lg"
                   onClick={() => {
                     setShowCard({ show: true, bookingId: data.booking_id });
                   }}
