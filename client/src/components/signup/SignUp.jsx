@@ -24,7 +24,6 @@ export default function SignUp() {
         emailRedirectTo: "http://localhost:5173/signin",
       },
     });
-    console.log(response);
     if (response?.error) {
       setError(response?.error.message);
       setLoading(false);
@@ -42,7 +41,7 @@ export default function SignUp() {
         </h5>
         <div>
           <label
-            for="email"
+            htmlFor="email"
             class="block mb-2 text-sm font-medium text-gray-900 text-white"
           >
             Your email
@@ -59,7 +58,7 @@ export default function SignUp() {
         </div>
         <div>
           <label
-            for="password"
+            htmlFor="password"
             class="block mb-2 text-sm font-medium text-gray-900 text-white"
           >
             Your password
