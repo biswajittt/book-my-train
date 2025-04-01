@@ -24,6 +24,7 @@ export default function Booking() {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/bookings/available-seats`
         );
+        console.log(response);
         setSeats(response.data);
         setAvailableSeatsNumber(response.data.length);
       } catch (err) {

@@ -1,9 +1,6 @@
 import supabase from "../supabase.js";
 export const getAvailableSeats = async (req, res) => {
-  const { data, error } = await supabase
-    .from("seats")
-    .select("*")
-    .eq("is_booked", false);
+  const { data, error } = await supabase.from("seats").select("*");
   if (error) return res.status(500).json({ error: error.message });
   res.json(data);
 };
