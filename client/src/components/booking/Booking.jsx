@@ -475,9 +475,7 @@ export default function Booking() {
                         setShowCard(true);
                       }}
                     >
-                      {loading
-                        ? "Booking best seats for you..."
-                        : " Add Traveller"}
+                      Add Traveller
                     </button>
                   ) : null}
                 </div>
