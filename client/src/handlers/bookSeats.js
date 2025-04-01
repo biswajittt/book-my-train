@@ -6,7 +6,6 @@ export const bookSeats = async (travellers) => {
   try {
     // Get the session, which includes the token
     const { data: session } = await supabase.auth.getSession();
-    console.log(session);
     if (!session?.session) return;
     const token = session?.session?.access_token; // Extract access token
 

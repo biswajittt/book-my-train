@@ -187,7 +187,7 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-      <section class="bg-gray-900 h-screen flex flex-col">
+      <section class="bg-gray-900 h-screen pt-2">
         {allBookings.length > 0 ? (
           <>
             <h2 class="my-4 mx-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">

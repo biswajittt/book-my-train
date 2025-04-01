@@ -2,7 +2,14 @@ import supabase from "../supabase.js";
 export const getAvailableSeats = async (req, res) => {
   const { data, error } = await supabase.from("seats").select("*");
   if (error) return res.status(500).json({ error: error.message });
-  res.json(data);
+  // Calculate available seats
+  const availableSeats = data.filter((seat) => !seat.is_booked);
+  const availableSeatCount = availableSeats.length;
+  // Send the original data and the available seat count
+  return res.status(201).json({
+    seats: data,
+    availableSeatCount: availableSeatCount,
+  });
 };
 // book seat
 // Helper function to check if seats are consecutive within a row

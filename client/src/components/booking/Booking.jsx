@@ -3,6 +3,7 @@ import axios from "axios";
 import { bookSeats } from "../../handlers/bookSeats.js";
 import { useAuth } from "../../context/AuthContext.jsx"; // Get user authentication
 import { useNavigate } from "react-router-dom";
+
 export default function Booking() {
   const navigate = useNavigate();
   const { user } = useAuth(); // Get user details
@@ -18,15 +19,31 @@ export default function Booking() {
   const [error, setError] = useState({ code: -1, msg: "" });
   const [bookingSuccessful, setBookingSuccessfull] = useState(false);
   const [avaibaleSeatsNumber, setAvailableSeatsNumber] = useState(null);
+  const [showTrainSeatsData, setShowTrainSeatsData] = useState(false);
+  const [seatRows, setSeatRows] = useState([]);
   useEffect(() => {
     const fetchSeats = async () => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/bookings/available-seats`
         );
-        console.log(response);
-        setSeats(response.data);
-        setAvailableSeatsNumber(response.data.length);
+        setSeats(response.data?.seats);
+        setAvailableSeatsNumber(response.data?.availableSeatCount);
+        //seat show
+        const seatsPerRow = 7;
+        const rows = [];
+        // Sort the data by row_number and then by seat_label
+        const sortedSeats = response.data?.seats.sort((a, b) => {
+          if (a.row_number !== b.row_number) {
+            return a.row_number - b.row_number;
+          }
+          return a.seat_label.localeCompare(b.seat_label);
+        });
+        // Group the sorted seats into rows of 7
+        for (let i = 0; i < sortedSeats.length; i += seatsPerRow) {
+          rows.push(sortedSeats.slice(i, i + seatsPerRow));
+        }
+        setSeatRows(rows);
       } catch (err) {
         setError({ code: 0, msg: "Failed to load seats" });
       } finally {
@@ -99,8 +116,22 @@ export default function Booking() {
         setName(""), setAge("");
         setGender("");
         setAddTraveller([]);
+        setBookingSuccessfull(true);
+        // Update seatRows to mark booked seats
+        const bookedSeatIds = result?.data?.booked_seats.map(
+          (seat) => seat.seat_id
+        );
+        setSeatRows((prevSeatRows) => {
+          return prevSeatRows.map((row) => {
+            return row.map((seat) => {
+              if (bookedSeatIds.includes(seat.id)) {
+                return { ...seat, is_booked: true };
+              }
+              return seat;
+            });
+          });
+        });
       }
-      setBookingSuccessfull(true);
       // setMessage(`Booking successful! Booking ID: ${result.booking_id}`);
     } catch (error) {
       // setMessage(error.error || "Failed to book seats.");
@@ -109,8 +140,81 @@ export default function Booking() {
       setLoading(false);
     }
   };
+  //display seats
+
   return (
     <>
+      {showTrainSeatsData && (
+        <div
+          id="popup-modal"
+          tabindex="-1"
+          class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+        >
+          <div class="m-auto top-[22%] relative p-4 w-auto sm:w-2xl  max-h-full">
+            <div class="relative rounded-lg shadow-sm bg-gray-700">
+              <button
+                type="button"
+                class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                data-modal-hide="popup-modal"
+                onClick={() => {
+                  setShowTrainSeatsData(false);
+                }}
+              >
+                <svg
+                  class="w-3 h-3"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 14 14"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                  />
+                </svg>
+                <span class="sr-only">Close modal</span>
+              </button>
+              <div class="p-4 md:p-5 text-center">
+                <h2 class=" mb-2 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+                  Seats
+                </h2>
+                {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+                <div class="space-y-4 md:flex md:items-center md:justify-center md:gap-6 md:space-y-0">
+                  <div className="overflow-x-auto w-full">
+                    <div className="flex justify-center">
+                      {seatRows.map((row, rowIndex) => (
+                        <div key={`row-${rowIndex}`}>
+                          {row.map((seat) => (
+                            <div
+                              className={`${
+                                seat.is_booked ? "bg-gray-500" : "bg-green-500"
+                              } text-white font-bold rounded-lg w-[30px] h-[30px] sm:w-[40px] sm:h-[40px] text-xs sm:text-sm border border-solid flex justify-center items-center m-[5px]`}
+                              key={seat.id}
+                            >
+                              {seat.seat_label}
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <span class="border text-white font-bold border-solid text-sm font-medium me-2 px-2.5 py-0.5 rounded-sm bg-green-500 text-green-300">
+                    Availabe
+                  </span>
+                  <span class="border text-white font-bold border-solid text-sm font-medium me-2 px-2.5 py-0.5 rounded-sm bg-gray-500 text-gray-300">
+                    Not Available
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {bookingSuccessful && (
         <div
           id="successModal"
@@ -296,7 +400,14 @@ export default function Booking() {
       <section class=" pt-4 antialiased bg-gray-900 md:py-8 h-[100vh]">
         <div class="mx-4 mb-4 bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-blue-400 border border-blue-400 inline-flex items-center justify-center">
           {avaibaleSeatsNumber >= 0 ? (
-            <h3>Seats Availabe: {avaibaleSeatsNumber}</h3>
+            <h3
+              className="cursor-pointer"
+              onClick={() => {
+                setShowTrainSeatsData(true);
+              }}
+            >
+              Seats Availabe: {avaibaleSeatsNumber}
+            </h3>
           ) : (
             <h3>...</h3>
           )}
@@ -364,7 +475,9 @@ export default function Booking() {
                         setShowCard(true);
                       }}
                     >
-                      Add Traveller
+                      {loading
+                        ? "Booking best seats for you..."
+                        : " Add Traveller"}
                     </button>
                   ) : null}
                 </div>
